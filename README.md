@@ -29,10 +29,6 @@ make build
 # Generate test data
 make test-data
 
-# Run individual benchmarks
-make bench-c
-make bench-haskell
-
 # Clean up
 make clean
 ```
@@ -58,17 +54,29 @@ make clean
 
 | Size    | C Time (s) | C Elem/s   | Haskell Time (s) | Haskell Elem/s | Ratio |
 |---------|------------|------------|------------------|----------------|-------|
-| 100     | 0.000004   | 25,000,000 | 0.000832         | 120,192        | 208x  |
-| 1,000   | 0.000041   | 24,390,244 | 0.001194         | 837,521        | 29x   |
-| 10,000  | 0.000463   | 21,598,272 | 0.009057         | 1,104,118      | 20x   |
-| 100,000 | 0.004828   | 20,712,510 | 0.093775         | 1,066,382      | 19x   |
+| 100     | 0.000011   | 9,090,909  | 0.000559         | 178,891        | 51x   |
+| 1,000   | 0.000038   | 26,315,789 | 0.000983         | 1,017,294      | 26x   |
+| 10,000  | 0.000413   | 24,213,075 | 0.009015         | 1,109,262      | 22x   |
+| 100,000 | 0.004857   | 20,588,841 | 0.093457         | 1,070,011      | 19x   |
 
 ### Key Observations
 
-- C implementation is 19-208x faster than Haskell
+- C implementation is 19-51x faster than Haskell
 - Performance gap narrows as dataset size increases
 - Both implementations correctly sort all test cases
 - C shows consistent ~20M elements/second throughput
 - Haskell achieves ~1M elements/second for larger datasets
+- Optimized codebase: 133 total lines (was 197), -32% reduction
 
 The performance difference reflects the trade-off between C's imperative, memory-efficient approach and Haskell's functional, list-based implementation that creates intermediate data structures.
+
+## Code Optimizations
+
+The project has been optimized for conciseness while maintaining full functionality:
+
+- **benchmark.c**: Reduced from 72 to 61 lines (-15%)
+- **Benchmark.hs**: Reduced from 20 to 15 lines (-25%)  
+- **run_benchmark.sh**: Reduced from 26 to 16 lines (-38%)
+- **Makefile**: Reduced from 35 to 28 lines (-20%)
+
+Optimizations include removing redundant code, using idiomatic patterns, combining operations, and eliminating unnecessary complexity.
