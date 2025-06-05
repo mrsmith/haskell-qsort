@@ -66,17 +66,5 @@ make clean
 - Both implementations correctly sort all test cases
 - C shows consistent ~20M elements/second throughput
 - Haskell achieves ~1M elements/second for larger datasets
-- Optimized codebase: 133 total lines (was 197), -32% reduction
 
 The performance difference reflects the trade-off between C's imperative, memory-efficient approach and Haskell's functional, list-based implementation that creates intermediate data structures.
-
-## Code Optimizations
-
-The project has been optimized for conciseness while maintaining full functionality:
-
-- **benchmark.c**: Reduced from 72 to 61 lines (-15%)
-- **Benchmark.hs**: Reduced from 20 to 15 lines (-25%)  
-- **run_benchmark.sh**: Reduced from 26 to 16 lines (-38%)
-- **Makefile**: Reduced from 35 to 28 lines (-20%)
-
-Optimizations include removing redundant code, using idiomatic patterns, combining operations, and eliminating unnecessary complexity.
