@@ -8,7 +8,7 @@ GHCFLAGS = -O2 -funbox-strict-fields -fexcess-precision -optc-O3
 SIZES = 100 1000 10000 100000
 
 # Targets
-.PHONY: all build test-data run bench-c bench-haskell clean clean-data clean-build
+.PHONY: all build test-data run clean
 
 all: build test-data
 
@@ -25,30 +25,13 @@ haskell_benchmark: Benchmark.hs QuickSort.hs
 test-data: $(foreach size,$(SIZES),test_data_$(size).txt)
 
 test_data_%.txt:
-	@echo "Generating test data for size $*"
 	@python3 -c "import random; random.seed(42); [print(random.randint(1, 1000000)) for _ in range($*)]" > $@
 
-# Run both benchmarks sequentially
+# Run both benchmarks
 run: build test-data
 	@./run_benchmark.sh c_benchmark
 	@./run_benchmark.sh haskell_benchmark
 
-# Individual benchmark targets
-bench-c: c_benchmark test-data
-	@./run_benchmark.sh c_benchmark
-
-bench-haskell: haskell_benchmark test-data
-	@./run_benchmark.sh haskell_benchmark
-
-# Clean targets
+# Clean everything
 clean:
-	rm -f c_benchmark haskell_benchmark
-	rm -f *.hi *.o
-	rm -f test_data_*.txt
-
-clean-data:
-	rm -f test_data_*.txt
-
-clean-build:
-	rm -f c_benchmark haskell_benchmark
-	rm -f *.hi *.o
+	rm -f c_benchmark haskell_benchmark *.hi *.o test_data_*.txt
