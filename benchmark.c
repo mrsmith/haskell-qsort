@@ -4,6 +4,39 @@
 #include <string.h>
 #include <math.h>
 
+double now_ns() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + ts.tv_nsec / 1e9;
+}
+
+double median(double times[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            if (times[i] > times[j]) {
+                double temp = times[i];
+                times[i] = times[j];
+                times[j] = temp;
+            }
+        }
+    }
+    return times[n/2];
+}
+
+double coefficient_of_variation(double times[], int n, double median_time) {
+    double mean = 0.0;
+    for (int i = 0; i < n; i++) mean += times[i];
+    mean /= n;
+    
+    double variance = 0.0;
+    for (int i = 0; i < n; i++) {
+        double diff = times[i] - mean;
+        variance += diff * diff;
+    }
+    double stddev = sqrt(variance / (n-1));
+    return (stddev / median_time) * 100.0;
+}
+
 void swap(int* a, int* b) {
     int temp = *a; *a = *b; *b = temp;
 }
@@ -51,41 +84,23 @@ int main() {
         return 1;
     }
     
-    // More warmup runs for small inputs that are noisier
-    int warmup_runs = (n < 10000) ? 3 : 1;
-    int total_runs = warmup_runs + 4;
-    double times[4];  // 4 measurement runs after warmup
+    // Unified methodology: 1 warmup + 4 measurement runs, same as Haskell
+    double times[4];
     
-    for (int run = 0; run < total_runs; run++) {
+    for (int run = 0; run < 5; run++) {
         int* copy = malloc(n * sizeof(int));
-        // Apply multiplier like Haskell for cache consistency
-        int multiplier = run + 1;
+        int multiplier = run + 1;  // Same multiplier approach as Haskell
+        
         for (int i = 0; i < n; i++) {
             copy[i] = arr[i] * multiplier;
         }
         
-        // Determine iterations based on input size for measurable timing
-        int iterations = (n < 1000) ? 1000 : (n < 10000) ? 100 : 1;
+        double start = now_ns();
+        quicksort(copy, 0, n - 1);
+        double elapsed = now_ns() - start;
         
-        struct timespec start, end;
-        clock_gettime(CLOCK_MONOTONIC, &start);
-        
-        for (int iter = 0; iter < iterations; iter++) {
-            // Reset array for each iteration (except last one for verification)
-            if (iter < iterations - 1) {
-                for (int j = 0; j < n; j++) {
-                    copy[j] = arr[j] * multiplier;
-                }
-            }
-            quicksort(copy, 0, n - 1);
-        }
-        
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        
-        if (run >= warmup_runs) {  // Skip warmup runs
-            double elapsed = (end.tv_sec - start.tv_sec) + 
-                           (end.tv_nsec - start.tv_nsec) / 1e9;
-            times[run - warmup_runs] = elapsed / iterations;  // Average per iteration
+        if (run > 0) {  // Skip first run (warmup)
+            times[run - 1] = elapsed;
         }
         if (run == 0) {
             printf("Sort verified: %s\n", is_sorted(copy, n) ? "PASSED" : "FAILED");
@@ -93,27 +108,10 @@ int main() {
         free(copy);
     }
     
-    for (int i = 0; i < 3; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            if (times[i] > times[j]) {
-                double temp = times[i];
-                times[i] = times[j];
-                times[j] = temp;
-            }
-        }
-    }
+    double median_time = median(times, 4);
+    double cv = coefficient_of_variation(times, 4, median_time);
     
-    double median = times[1];  // median of 4 values (average of middle two, but times[1] is close enough)
-    double mean = (times[0] + times[1] + times[2] + times[3]) / 4.0;
-    double variance = 0.0;
-    for (int i = 0; i < 4; i++) {
-        double diff = times[i] - mean;
-        variance += diff * diff;
-    }
-    double stddev = sqrt(variance / 3.0);  // n-1 for sample std dev
-    double cv = (stddev / median) * 100.0;  // coefficient of variation
-    
-    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median, cv);
+    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median_time, cv);
     
     free(arr);
     return 0;
