@@ -54,26 +54,29 @@ make clean
 
 | Size    | C Time (±CV%)         | C Elem/s   | Haskell Time (±CV%)  | Haskell Elem/s | Ratio |
 |---------|----------------------|------------|----------------------|----------------|-------|
-| 100     | 0.000002s (±74.2%)   | 50,000,000 | 0.000024s (±246.0%) | 4,166,667      | 12x   |
-| 1,000   | 0.000022s (±39.2%)   | 45,454,545 | 0.000380s (±108.4%) | 2,631,579      | 17x   |
-| 10,000  | 0.000387s (±3.5%)    | 25,839,793 | 0.005174s (±86.0%)  | 1,932,741      | 13x   |
-| 100,000 | 0.004888s (±1.2%)    | 20,458,265 | 0.079379s (±57.5%)  | 1,259,779      | 16x   |
+| 100     | 0.000002s (±6.2%)    | 50,000,000 | 0.000025s (±3.3%)   | 4,000,000      | 12x   |
+| 1,000   | 0.000016s (±1.9%)    | 62,500,000 | 0.000386s (±0.9%)   | 2,590,674      | 24x   |
+| 10,000  | 0.000376s (±1.1%)    | 26,595,745 | 0.005028s (±4.1%)   | 1,988,862      | 13x   |
+| 100,000 | 0.004839s (±2.2%)    | 20,665,427 | 0.078737s (±1.1%)   | 1,270,051      | 16x   |
 
 ### Key Observations
 
-- C implementation is 12-17x faster than Haskell
+- C implementation is 12-24x faster than Haskell
 - Both implementations correctly sort all test cases
-- C shows consistent ~20-50M elements/second throughput
+- C shows consistent ~20-60M elements/second throughput
 - Haskell achieves ~1-4M elements/second across all sizes
-- **Statistical stability**: Both use 5-run median with coefficient of variation (CV%)
+- **Excellent statistical stability**: Both implementations now show ±1-6% variance
 
 ### Measurement Reliability
 
-The **±CV%** shows timing stability:
-- **C**: Very stable on larger inputs (±1.2-3.5%), more variable on small inputs
-- **Haskell**: More variable overall (±57-246%), typical for functional implementations
+The **±CV%** shows timing stability - both implementations now achieve professional-grade reliability:
+- **C**: Excellent stability (±1.1-6.2%) across all input sizes
+- **Haskell**: Excellent stability (±0.9-4.1%) across all input sizes
 - **Lower CV% = more reliable** measurements
 
-**Statistical Method**: 5 runs per size, report median time with coefficient of variation (standard deviation / median × 100%)
+**Advanced Statistical Method**: 
+- **C**: Adaptive iterations (1000x for small inputs), nanosecond timer (`clock_gettime`), 3 warmup runs for small inputs
+- **Haskell**: 5-run median with multiplier approach, 1 warmup run
+- Report median time with coefficient of variation (standard deviation / median × 100%)
 
 The performance difference reflects the trade-off between C's imperative, memory-efficient approach and Haskell's functional, list-based implementation that creates intermediate data structures.
