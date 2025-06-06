@@ -11,10 +11,13 @@ main = do
         let sorted = quickSort numbers
             sortedTimes = sort times
             medianTime = sortedTimes !! 2
-            variance = ((last sortedTimes - head sortedTimes) / medianTime) * 100.0
+            mean = sum times / fromIntegral (length times)
+            variance = sum [(t - mean)^2 | t <- times] / 4.0  -- n-1 for sample variance
+            stddev = sqrt variance
+            cv = (stddev / medianTime) * 100.0  -- coefficient of variation
         putStrLn $ "Sort verified: " ++ if isSorted sorted then "PASSED" else "FAILED"
         putStrLn $ "Elements sorted: " ++ show (length numbers)
-        printf "Time taken: %.6f seconds (±%.1f%%)\n" medianTime variance
+        printf "Time taken: %.6f seconds (±%.1f%%)\n" medianTime cv
 
 timeSort :: [Int] -> Int -> IO Double
 timeSort numbers multiplier = do

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 
 void swap(int* a, int* b) {
     int temp = *a; *a = *b; *b = temp;
@@ -77,9 +78,16 @@ int main() {
     }
     
     double median = times[2];
-    double variance = ((times[4] - times[0]) / median) * 100.0;
+    double mean = (times[0] + times[1] + times[2] + times[3] + times[4]) / 5.0;
+    double variance = 0.0;
+    for (int i = 0; i < 5; i++) {
+        double diff = times[i] - mean;
+        variance += diff * diff;
+    }
+    double stddev = sqrt(variance / 4.0);  // n-1 for sample std dev
+    double cv = (stddev / median) * 100.0;  // coefficient of variation
     
-    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median, variance);
+    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median, cv);
     
     free(arr);
     return 0;
