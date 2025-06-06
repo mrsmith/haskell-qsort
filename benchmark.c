@@ -76,7 +76,10 @@ int main() {
         }
     }
     
-    printf("Elements sorted: %d\nTime taken: %.6f seconds\n", n, times[2]);
+    double median = times[2];
+    double variance = ((times[4] - times[0]) / median) * 100.0;
+    
+    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median, variance);
     
     free(arr);
     return 0;
