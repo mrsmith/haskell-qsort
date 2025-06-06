@@ -1,0 +1,19 @@
+# Compiled binaries
+c_benchmark
+haskell_benchmark
+
+# Haskell compilation artifacts
+*.hi
+*.o
+
+# Test data files
+test_data_*.txt
+
+# macOS
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
