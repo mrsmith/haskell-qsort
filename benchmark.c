@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 void swap(int* a, int* b) {
     int temp = *a; *a = *b; *b = temp;
@@ -49,13 +50,33 @@ int main() {
         return 1;
     }
     
-    clock_t start = clock();
-    quicksort(arr, 0, n - 1);
-    clock_t end = clock();
+    double times[5];
+    for (int run = 0; run < 5; run++) {
+        int* copy = malloc(n * sizeof(int));
+        memcpy(copy, arr, n * sizeof(int));
+        
+        clock_t start = clock();
+        quicksort(copy, 0, n - 1);
+        clock_t end = clock();
+        
+        times[run] = ((double)(end - start)) / CLOCKS_PER_SEC;
+        if (run == 0) {
+            printf("Sort verified: %s\n", is_sorted(copy, n) ? "PASSED" : "FAILED");
+        }
+        free(copy);
+    }
     
-    printf("Sort verified: %s\nElements sorted: %d\nTime taken: %.6f seconds\n", 
-           is_sorted(arr, n) ? "PASSED" : "FAILED", n, 
-           ((double)(end - start)) / CLOCKS_PER_SEC);
+    for (int i = 0; i < 4; i++) {
+        for (int j = i + 1; j < 5; j++) {
+            if (times[i] > times[j]) {
+                double temp = times[i];
+                times[i] = times[j];
+                times[j] = temp;
+            }
+        }
+    }
+    
+    printf("Elements sorted: %d\nTime taken: %.6f seconds\n", n, times[2]);
     
     free(arr);
     return 0;
