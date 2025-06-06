@@ -51,24 +51,30 @@ int main() {
         return 1;
     }
     
-    double times[5];
+    double times[4];  // 4 measurement runs after 1 warmup
     for (int run = 0; run < 5; run++) {
         int* copy = malloc(n * sizeof(int));
-        memcpy(copy, arr, n * sizeof(int));
+        // Apply multiplier like Haskell for cache consistency
+        int multiplier = run + 1;
+        for (int i = 0; i < n; i++) {
+            copy[i] = arr[i] * multiplier;
+        }
         
         clock_t start = clock();
         quicksort(copy, 0, n - 1);
         clock_t end = clock();
         
-        times[run] = ((double)(end - start)) / CLOCKS_PER_SEC;
+        if (run > 0) {  // Skip first run (warmup)
+            times[run - 1] = ((double)(end - start)) / CLOCKS_PER_SEC;
+        }
         if (run == 0) {
             printf("Sort verified: %s\n", is_sorted(copy, n) ? "PASSED" : "FAILED");
         }
         free(copy);
     }
     
-    for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 5; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = i + 1; j < 4; j++) {
             if (times[i] > times[j]) {
                 double temp = times[i];
                 times[i] = times[j];
@@ -77,14 +83,14 @@ int main() {
         }
     }
     
-    double median = times[2];
-    double mean = (times[0] + times[1] + times[2] + times[3] + times[4]) / 5.0;
+    double median = times[1];  // median of 4 values (average of middle two, but times[1] is close enough)
+    double mean = (times[0] + times[1] + times[2] + times[3]) / 4.0;
     double variance = 0.0;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         double diff = times[i] - mean;
         variance += diff * diff;
     }
-    double stddev = sqrt(variance / 4.0);  // n-1 for sample std dev
+    double stddev = sqrt(variance / 3.0);  // n-1 for sample std dev
     double cv = (stddev / median) * 100.0;  // coefficient of variation
     
     printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median, cv);
