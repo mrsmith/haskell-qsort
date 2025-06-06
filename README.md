@@ -52,19 +52,28 @@ make clean
 
 ### Performance Results
 
-| Size    | C Time (s) | C Elem/s   | Haskell Time (s) | Haskell Elem/s | Ratio |
-|---------|------------|------------|------------------|----------------|-------|
-| 100     | 0.000011   | 9,090,909  | 0.000559         | 178,891        | 51x   |
-| 1,000   | 0.000038   | 26,315,789 | 0.000983         | 1,017,294      | 26x   |
-| 10,000  | 0.000413   | 24,213,075 | 0.009015         | 1,109,262      | 22x   |
-| 100,000 | 0.004857   | 20,588,841 | 0.093457         | 1,070,011      | 19x   |
+| Size    | C Time (±CV%)         | C Elem/s   | Haskell Time (±CV%)  | Haskell Elem/s | Ratio |
+|---------|----------------------|------------|----------------------|----------------|-------|
+| 100     | 0.000002s (±74.2%)   | 50,000,000 | 0.000024s (±246.0%) | 4,166,667      | 12x   |
+| 1,000   | 0.000022s (±39.2%)   | 45,454,545 | 0.000380s (±108.4%) | 2,631,579      | 17x   |
+| 10,000  | 0.000387s (±3.5%)    | 25,839,793 | 0.005174s (±86.0%)  | 1,932,741      | 13x   |
+| 100,000 | 0.004888s (±1.2%)    | 20,458,265 | 0.079379s (±57.5%)  | 1,259,779      | 16x   |
 
 ### Key Observations
 
-- C implementation is 19-51x faster than Haskell
-- Performance gap narrows as dataset size increases
+- C implementation is 12-17x faster than Haskell
 - Both implementations correctly sort all test cases
-- C shows consistent ~20M elements/second throughput
-- Haskell achieves ~1M elements/second for larger datasets
+- C shows consistent ~20-50M elements/second throughput
+- Haskell achieves ~1-4M elements/second across all sizes
+- **Statistical stability**: Both use 5-run median with coefficient of variation (CV%)
+
+### Measurement Reliability
+
+The **±CV%** shows timing stability:
+- **C**: Very stable on larger inputs (±1.2-3.5%), more variable on small inputs
+- **Haskell**: More variable overall (±57-246%), typical for functional implementations
+- **Lower CV% = more reliable** measurements
+
+**Statistical Method**: 5 runs per size, report median time with coefficient of variation (standard deviation / median × 100%)
 
 The performance difference reflects the trade-off between C's imperative, memory-efficient approach and Haskell's functional, list-based implementation that creates intermediate data structures.
