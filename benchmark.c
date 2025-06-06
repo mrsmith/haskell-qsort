@@ -84,10 +84,10 @@ int main() {
         return 1;
     }
     
-    // Unified methodology: 1 warmup + 4 measurement runs, same as Haskell
-    double times[4];
+    // Unified methodology: 1 warmup + 5 measurement runs, same as Haskell
+    double times[5];
     
-    for (int run = 0; run < 5; run++) {
+    for (int run = 0; run < 6; run++) {
         int* copy = malloc(n * sizeof(int));
         int multiplier = run + 1;  // Same multiplier approach as Haskell
         
@@ -119,8 +119,8 @@ int main() {
         free(copy);
     }
     
-    double median_time = median(times, 4);
-    double cv = coefficient_of_variation(times, 4, median_time);
+    double median_time = median(times, 5);
+    double cv = coefficient_of_variation(times, 5, median_time);
     
     printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median_time, cv);
     

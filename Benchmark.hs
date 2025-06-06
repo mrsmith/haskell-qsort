@@ -8,13 +8,13 @@ main :: IO ()
 main = do
     numbers <- map read . words <$> getContents :: IO [Int]
     if null numbers then putStrLn "No input data" else do
-        allTimes <- mapM (timeSort numbers) [1..5]
+        allTimes <- mapM (timeSort numbers) [1..6]
         let times = drop 1 allTimes  -- Drop first run (warmup)
             sorted = quickSort numbers
             sortedTimes = sort times
-            medianTime = sortedTimes !! 2  -- median of 4 values (matches C: times[n/2])
+            medianTime = sortedTimes !! 2  -- median of 5 values (matches C: times[n/2])
             mean = sum times / fromIntegral (length times)
-            variance = sum [(t - mean)^2 | t <- times] / 3.0  -- n-1 for sample variance
+            variance = sum [(t - mean)^2 | t <- times] / 4.0  -- n-1 for sample variance
             stddev = sqrt variance
             cv = (stddev / medianTime) * 100.0  -- coefficient of variation
         putStrLn $ "Sort verified: " ++ if isSorted sorted then "PASSED" else "FAILED"
