@@ -16,10 +16,10 @@ main = do
             mean = sum times / fromIntegral (length times)
             variance = sum [(t - mean)^2 | t <- times] / 4.0  -- n-1 for sample variance
             stddev = sqrt variance
-            cv = (stddev / medianTime) * 100.0  -- coefficient of variation
+            cv = (stddev / mean) * 100.0  -- coefficient of variation
         putStrLn $ "Sort verified: " ++ if isSorted sorted then "PASSED" else "FAILED"
         putStrLn $ "Elements sorted: " ++ show (length numbers)
-        printf "Time taken: %.6f seconds (±%.1f%%)\n" medianTime cv
+        printf "Median: %.6f seconds, Mean: %.6f seconds (±%.1f%%)\n" medianTime mean cv
 
 timeSort :: [Int] -> Int -> IO Double
 timeSort numbers multiplier = do

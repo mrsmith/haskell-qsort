@@ -80,8 +80,8 @@ This package provides a rigorous comparative benchmark of quicksort implementati
 ## Recommendations
 
 ### Immediate Improvements
-1. **Fix median calculation**: Use proper median for even-length arrays
-2. **Standardize CV**: Use σ/μ instead of σ/median
+1. ~~**Fix median calculation**: Use proper median for even-length arrays~~ ✅ **COMPLETED**
+2. ~~**Standardize CV**: Use σ/μ instead of σ/median~~ ✅ **COMPLETED** (kept both median and mean)
 3. **Add worst-case inputs**: Include sorted, reverse-sorted, and duplicate-heavy datasets
 
 ### Research Extensions

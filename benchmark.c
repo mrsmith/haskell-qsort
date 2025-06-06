@@ -23,18 +23,20 @@ double median(double times[], int n) {
     return times[n/2];
 }
 
-double coefficient_of_variation(double times[], int n, double median_time) {
-    double mean = 0.0;
-    for (int i = 0; i < n; i++) mean += times[i];
-    mean /= n;
-    
+double coefficient_of_variation(double times[], int n, double mean_time) {
     double variance = 0.0;
     for (int i = 0; i < n; i++) {
-        double diff = times[i] - mean;
+        double diff = times[i] - mean_time;
         variance += diff * diff;
     }
     double stddev = sqrt(variance / (n-1));
-    return (stddev / median_time) * 100.0;
+    return (stddev / mean_time) * 100.0;
+}
+
+double calculate_mean(double times[], int n) {
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) sum += times[i];
+    return sum / n;
 }
 
 void swap(int* a, int* b) {
@@ -120,9 +122,10 @@ int main() {
     }
     
     double median_time = median(times, 5);
-    double cv = coefficient_of_variation(times, 5, median_time);
+    double mean_time = calculate_mean(times, 5);
+    double cv = coefficient_of_variation(times, 5, mean_time);
     
-    printf("Elements sorted: %d\nTime taken: %.6f seconds (±%.1f%%)\n", n, median_time, cv);
+    printf("Elements sorted: %d\nMedian: %.6f seconds, Mean: %.6f seconds (±%.1f%%)\n", n, median_time, mean_time, cv);
     
     free(arr);
     return 0;
