@@ -62,6 +62,14 @@ void quicksort(int arr[], int low, int high) {
     }
 }
 
+int compare_ints(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+void stdlib_qsort(int arr[], int n) {
+    qsort(arr, n, sizeof(int), compare_ints);
+}
+
 int is_sorted(int arr[], int n) {
     for (int i = 1; i < n; i++) {
         if (arr[i] < arr[i - 1]) return 0;

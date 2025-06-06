@@ -9,12 +9,18 @@ DATA_TYPES = random sorted reverse duplicates
 
 all: build test-data
 
-build: c_benchmark haskell_benchmark
+build: c_benchmark qsort_benchmark haskell_benchmark stdsort_benchmark
 
 c_benchmark: benchmark.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+qsort_benchmark: qsort_benchmark.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 haskell_benchmark: Benchmark.hs QuickSort.hs
+	$(GHC) $(GHCFLAGS) -o $@ $<
+
+stdsort_benchmark: StdSort.hs
 	$(GHC) $(GHCFLAGS) -o $@ $<
 
 test-data: data $(foreach type,$(DATA_TYPES),$(foreach size,$(SIZES),data/$(type)_$(size).txt))
@@ -37,20 +43,16 @@ data/duplicates_%.txt:
 run: build test-data
 	@echo "=== RANDOM DATA ==="
 	@./run_benchmark.sh c_benchmark random
+	@./run_benchmark.sh qsort_benchmark random
 	@./run_benchmark.sh haskell_benchmark random
+	@./run_benchmark.sh stdsort_benchmark random
 	@echo
-	@echo "=== SORTED DATA ==="
-	@./run_benchmark.sh c_benchmark sorted
-	@./run_benchmark.sh haskell_benchmark sorted
-	@echo
-	@echo "=== REVERSE SORTED DATA ==="
-	@./run_benchmark.sh c_benchmark reverse
-	@./run_benchmark.sh haskell_benchmark reverse
-	@echo
-	@echo "=== DUPLICATE-HEAVY DATA ==="
+	@echo "=== DUPLICATES DATA ==="
 	@./run_benchmark.sh c_benchmark duplicates
+	@./run_benchmark.sh qsort_benchmark duplicates
 	@./run_benchmark.sh haskell_benchmark duplicates
+	@./run_benchmark.sh stdsort_benchmark duplicates
 
 clean:
-	rm -f c_benchmark haskell_benchmark *.hi *.o
+	rm -f c_benchmark qsort_benchmark haskell_benchmark stdsort_benchmark *.hi *.o
 	rm -rf data

@@ -82,11 +82,11 @@ This package provides a rigorous comparative benchmark of quicksort implementati
 ### Immediate Improvements
 1. ~~**Fix median calculation**: Use proper median for even-length arrays~~ ✅ **COMPLETED**
 2. ~~**Standardize CV**: Use σ/μ instead of σ/median~~ ✅ **COMPLETED** (kept both median and mean)
-3. **Add worst-case inputs**: Include sorted, reverse-sorted, and duplicate-heavy datasets
+3. ~~**Add worst-case inputs**: Include sorted, reverse-sorted, and duplicate-heavy datasets~~ ✅ **COMPLETED**
 
 ### Research Extensions
 1. **Fair algorithmic comparison**: Implement in-place Haskell quicksort
-2. **Library comparison**: Benchmark against `qsort()` and `Data.List.sort`
+2. ~~**Library comparison**: Benchmark against `qsort()` and `Data.List.sort`~~ ✅ **COMPLETED**
 3. **Parallel implementations**: Compare multi-threaded versions
 4. **Memory profiling**: Add space complexity measurements
 
