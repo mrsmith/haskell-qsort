@@ -57,7 +57,8 @@ make clean
 |-----------|------------|-----------|------------|-------------|-------|
 | **C Quicksort** | 50M | 48M | 26M | 21M | Our implementation |
 | **C qsort()** | 50M | 30M | 18M | 15M | Standard library |
-| **Haskell Quicksort** | 4M | 3M | 2M | 1M | Our implementation |
+| **Haskell Quicksort** | 4M | 3M | 2M | 1M | Functional lists |
+| **Haskell In-place** | 13M | 7M | 4M | 2M | Mutable arrays |
 | **Haskell sort** | 9M | 6M | 3M | 2M | Data.List.sort |
 
 #### Duplicate Data (Worst Case)
@@ -66,6 +67,7 @@ make clean
 | **C Quicksort** | 100M | 24M | 3M | 317K | **O(n²) degradation** |
 | **C qsort()** | 100M | 250M | 125M | 114M | **Excellent** (introsort) |
 | **Haskell Quicksort** | 3M | 457K | 54K | ~10K* | **O(n²) degradation** |
+| **Haskell In-place** | 8M | 1.3M | 146K | 15K | **O(n²) degradation** |
 | **Haskell sort** | ~40M* | ~20M* | ~10M* | ~5M* | **Good** (mergesort) |
 
 *Estimated - some tests timed out due to O(n²) behavior
@@ -80,7 +82,8 @@ make clean
 
 **Language Performance:**
 - **C vs Haskell**: 5-25x performance advantage for C across all algorithms
-- **Memory allocation**: C in-place vs Haskell list creation explains most difference
+- **Memory matters in Haskell**: In-place arrays 2x faster than functional lists
+- **Fair comparison**: In-place Haskell vs C shows ~10x difference (algorithmic equivalence)
 - **Compiler optimization**: Both GCC and GHC produce highly optimized code
 
 ### Statistical Methodology

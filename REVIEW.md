@@ -85,7 +85,7 @@ This package provides a rigorous comparative benchmark of quicksort implementati
 3. ~~**Add worst-case inputs**: Include sorted, reverse-sorted, and duplicate-heavy datasets~~ ✅ **COMPLETED**
 
 ### Research Extensions
-1. **Fair algorithmic comparison**: Implement in-place Haskell quicksort
+1. ~~**Fair algorithmic comparison**: Implement in-place Haskell quicksort~~ ✅ **COMPLETED**
 2. ~~**Library comparison**: Benchmark against `qsort()` and `Data.List.sort`~~ ✅ **COMPLETED**
 3. **Parallel implementations**: Compare multi-threaded versions
 4. **Memory profiling**: Add space complexity measurements

@@ -1,12 +1,16 @@
 # Compiled binaries
 c_benchmark
+qsort_benchmark
 haskell_benchmark
+stdsort_benchmark
+inplace_benchmark
 
 # Haskell compilation artifacts
 *.hi
 *.o
 
-# Test data files
+# Test data
+data/
 test_data_*.txt
 
 # macOS
