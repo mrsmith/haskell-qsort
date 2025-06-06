@@ -95,9 +95,20 @@ int main() {
             copy[i] = arr[i] * multiplier;
         }
         
+        // Add iterations for small inputs to get measurable timing
+        int iterations = (n < 1000) ? 1000 : (n < 10000) ? 100 : 1;
+        
         double start = now_ns();
-        quicksort(copy, 0, n - 1);
-        double elapsed = now_ns() - start;
+        for (int iter = 0; iter < iterations; iter++) {
+            if (iter > 0) {
+                // Reset array for each iteration (except last one for verification)
+                for (int j = 0; j < n; j++) {
+                    copy[j] = arr[j] * multiplier;
+                }
+            }
+            quicksort(copy, 0, n - 1);
+        }
+        double elapsed = (now_ns() - start) / iterations;
         
         if (run > 0) {  // Skip first run (warmup)
             times[run - 1] = elapsed;

@@ -54,28 +54,29 @@ make clean
 
 | Size    | C Time (±CV%)         | C Elem/s   | Haskell Time (±CV%)  | Haskell Elem/s | Ratio |
 |---------|----------------------|------------|----------------------|----------------|-------|
-| 100     | 0.000004s (±31.5%)   | 25,000,000 | 0.000028s (±8.7%)   | 3,571,429      | 7x    |
-| 1,000   | 0.000027s (±21.5%)   | 37,037,037 | 0.000387s (±0.6%)   | 2,583,979      | 14x   |
-| 10,000  | 0.000382s (±1.0%)    | 26,178,010 | 0.005032s (±3.1%)   | 1,987,281      | 13x   |
-| 100,000 | 0.004816s (±0.2%)    | 20,764,120 | 0.078278s (±0.8%)   | 1,277,498      | 16x   |
+| 100     | 0.000001s (±0.3%)    | 100,000,000| 0.000023s (±1.4%)   | 4,347,826      | 23x   |
+| 1,000   | 0.000014s (±0.6%)    | 71,428,571 | 0.000384s (±0.5%)   | 2,604,167      | 27x   |
+| 10,000  | 0.000379s (±1.1%)    | 26,385,224 | 0.006100s (±7.2%)   | 1,639,344      | 16x   |
+| 100,000 | 0.004888s (±1.3%)    | 20,458,265 | 0.086427s (±2.8%)   | 1,157,046      | 18x   |
 
 ### Key Observations
 
-- C implementation is 7-16x faster than Haskell
+- C implementation is 16-27x faster than Haskell
 - Both implementations correctly sort all test cases
-- C shows consistent ~20-37M elements/second throughput
+- C shows consistent ~20-100M elements/second throughput
 - Haskell achieves ~1-4M elements/second across all sizes
-- **Unified methodology**: Both implementations use identical statistical approaches
+- **Unified methodology**: Both implementations use identical statistical approaches with iterations
 
 ### Measurement Reliability
 
 The **±CV%** shows timing stability with the unified methodology:
-- **C**: Variable stability (±0.2-31.5%) - higher variance for small inputs is expected
-- **Haskell**: Good stability (±0.6-8.7%) across all input sizes  
+- **C**: Excellent stability (±0.3-1.3%) across all input sizes
+- **Haskell**: Good stability (±0.5-7.2%) across all input sizes  
 - **Lower CV% = more reliable** measurements
 
 **Unified Statistical Method**: 
-- **Both implementations**: 1 warmup run + 4 measurement runs using multiplier approach (data × run_number)
+- **Both implementations**: 1 warmup run + 4 measurement runs using multiplier approach
+- **Iterations**: 1000x for n<1000, 100x for n<10000, 1x for n≥10000 (identical in both)
 - **Timing**: Nanosecond precision using `clock_gettime` (C) and `getCPUTime` (Haskell)
 - **Analysis**: Report median time with coefficient of variation (standard deviation / median × 100%)
 

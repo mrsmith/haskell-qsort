@@ -1,7 +1,8 @@
 import QuickSort
 import System.CPUTime
 import Text.Printf
-import Data.List (sort)
+import Data.List (sort, foldl')
+import Control.DeepSeq
 
 main :: IO ()
 main = do
@@ -11,7 +12,7 @@ main = do
         let times = drop 1 allTimes  -- Drop first run (warmup)
             sorted = quickSort numbers
             sortedTimes = sort times
-            medianTime = sortedTimes !! 1  -- median of 4 values
+            medianTime = sortedTimes !! 2  -- median of 4 values (matches C: times[n/2])
             mean = sum times / fromIntegral (length times)
             variance = sum [(t - mean)^2 | t <- times] / 3.0  -- n-1 for sample variance
             stddev = sqrt variance
@@ -23,11 +24,14 @@ main = do
 timeSort :: [Int] -> Int -> IO Double
 timeSort numbers multiplier = do
     let modified = map (* multiplier) numbers
+        iterations = if length numbers < 1000 then 1000 
+                    else if length numbers < 10000 then 100 
+                    else 1
     start <- getCPUTime
-    let sorted = quickSort modified
-    length sorted `seq` do
+    let doSort i = let input = map (* (i + multiplier)) modified
+                   in quickSort input
+        results = map doSort [0..iterations-1]
+    deepseq results $ do
         end <- getCPUTime
-        return $ fromIntegral (end - start) / 1e12
+        return $ fromIntegral (end - start) / (1e12 * fromIntegral iterations)
 
-median :: [Double] -> Double
-median xs = sort xs !! 2
