@@ -51,8 +51,12 @@ int main() {
         return 1;
     }
     
-    double times[4];  // 4 measurement runs after 1 warmup
-    for (int run = 0; run < 5; run++) {
+    // More warmup runs for small inputs that are noisier
+    int warmup_runs = (n < 10000) ? 3 : 1;
+    int total_runs = warmup_runs + 4;
+    double times[4];  // 4 measurement runs after warmup
+    
+    for (int run = 0; run < total_runs; run++) {
         int* copy = malloc(n * sizeof(int));
         // Apply multiplier like Haskell for cache consistency
         int multiplier = run + 1;
@@ -60,12 +64,28 @@ int main() {
             copy[i] = arr[i] * multiplier;
         }
         
-        clock_t start = clock();
-        quicksort(copy, 0, n - 1);
-        clock_t end = clock();
+        // Determine iterations based on input size for measurable timing
+        int iterations = (n < 1000) ? 1000 : (n < 10000) ? 100 : 1;
         
-        if (run > 0) {  // Skip first run (warmup)
-            times[run - 1] = ((double)(end - start)) / CLOCKS_PER_SEC;
+        struct timespec start, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        
+        for (int iter = 0; iter < iterations; iter++) {
+            // Reset array for each iteration (except last one for verification)
+            if (iter < iterations - 1) {
+                for (int j = 0; j < n; j++) {
+                    copy[j] = arr[j] * multiplier;
+                }
+            }
+            quicksort(copy, 0, n - 1);
+        }
+        
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        
+        if (run >= warmup_runs) {  // Skip warmup runs
+            double elapsed = (end.tv_sec - start.tv_sec) + 
+                           (end.tv_nsec - start.tv_nsec) / 1e9;
+            times[run - warmup_runs] = elapsed / iterations;  // Average per iteration
         }
         if (run == 0) {
             printf("Sort verified: %s\n", is_sorted(copy, n) ? "PASSED" : "FAILED");
